@@ -1,13 +1,13 @@
-package com.dama;
+package com.dama.cerbero;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DamasrvApplication {
+public class DemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DamasrvApplication.class, args);
+		SpringApplication.run(DemoApplication.class, args);
 	}
 
 }
