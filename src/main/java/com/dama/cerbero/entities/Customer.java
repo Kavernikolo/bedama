@@ -10,8 +10,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
-	@Table(name = "customers")
+	@Table(name = "Customers")
 	public class Customer {
+	
+	public Customer () {}
 	
 		public Customer(Airdrop a) {
 			this.address = a.getAddress();
@@ -33,8 +35,13 @@ import jakarta.persistence.GenerationType;
 	    private int sentdama;
 	    // standard constructors / setters / getters / toString
 
+	    
 		public String getAddress() {
 			return address;
+		}
+
+		public long getId() {
+			return id;
 		}
 
 		public void setAddress(String address) {
@@ -47,6 +54,14 @@ import jakarta.persistence.GenerationType;
 
 		public void setTs(long ts) {
 			this.ts = ts;
+		}
+
+		public String getUrl() {
+			return url;
+		}
+
+		public void setUrl(String url) {
+			this.url = url;
 		}
 
 		public int getSentdama() {

@@ -38,6 +38,7 @@ public class MainController {
 		}
 		catch (Exception e){
 			log.error("Exception occurred while trying to save customer "+airdrop);
+			log.error(e.getMessage(),e.getCause());
 			return false;
 		}
 		log.info("Correctly saved customer "+airdrop);
