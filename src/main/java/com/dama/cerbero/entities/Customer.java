@@ -23,37 +23,31 @@ import jakarta.persistence.GenerationType;
 		}
 	    
 	    @Id
-	    @GeneratedValue(strategy = GenerationType.AUTO)
-	    private long id;
+	    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "my_id_seq")
+	    private Long id;
 	    
 	    private String address;
 	    
 	    private String url;
 
-	    private long ts;
+	    private Long ts;
 	    
-	    private int sentdama;
+	    private Integer sentdama;
 	    // standard constructors / setters / getters / toString
 
-	    
+
+		@Override
+		public String toString() {
+			return "Customer [id=" + id + ", address=" + address + ", url=" + url + ", ts=" + ts + ", sentdama="
+					+ sentdama + "]";
+		}
+
 		public String getAddress() {
 			return address;
 		}
 
-		public long getId() {
-			return id;
-		}
-
 		public void setAddress(String address) {
 			this.address = address;
-		}
-
-		public long getTs() {
-			return ts;
-		}
-
-		public void setTs(long ts) {
-			this.ts = ts;
 		}
 
 		public String getUrl() {
@@ -64,18 +58,24 @@ import jakarta.persistence.GenerationType;
 			this.url = url;
 		}
 
-		public int getSentdama() {
+		public Long getTs() {
+			return ts;
+		}
+
+		public void setTs(Long ts) {
+			this.ts = ts;
+		}
+
+		public Integer getSentdama() {
 			return sentdama;
 		}
 
-		public void setSentdama(int sentdama) {
+		public void setSentdama(Integer sentdama) {
 			this.sentdama = sentdama;
 		}
 
-		@Override
-		public String toString() {
-			return "Customer [id=" + id + ", address=" + address + ", url=" + url + ", ts=" + ts + ", sentdama="
-					+ sentdama + "]";
+		public Long getId() {
+			return id;
 		}
 		
 		
