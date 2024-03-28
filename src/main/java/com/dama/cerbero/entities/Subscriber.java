@@ -10,12 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
-	@Table(name = "Customers")
-	public class Customer {
+	@Table(name = "Subscriber")
+	public class Subscriber {
 	
-	public Customer () {}
+	public Subscriber () {}
 	
-		public Customer(Airdrop a) {
+		public Subscriber(Airdrop a) {
 			this.address = a.getAddress();
 			this.sentdama = 0;
 			this.ts = System.currentTimeMillis();
