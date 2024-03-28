@@ -1,5 +1,6 @@
 package com.dama.cerbero.controller;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -38,11 +39,16 @@ public class MainController {
 	public @ResponseBody Outcome enrol(@RequestBody Airdrop airdrop){
 		
 		try { 
-			userRepository.save(new Subscriber(airdrop));
+			if(userRepository.count() < 1000) {
+				userRepository.save(new Subscriber(airdrop));
+			}
+			else {return new Outcome("POOL MAX SIZE REACHED");}
 		}
 		catch (Exception e){
+			
 			log.error("Exception occurred while trying to save customer "+airdrop);
-			log.error(e.getMessage(),e.getCause());
+			log.debug(e.getMessage(),e.getCause());
+			if(e.getMessage().contains("Duplicate")) return new Outcome("DUPLICATE");
 			return new Outcome(false);
 		}
 		log.info("Correctly saved customer "+airdrop);
@@ -60,18 +66,13 @@ public class MainController {
 				}
 			}
 			for (Subscriber s : subscribers) {
-				if(s.getId() > 1000) {
-					return new Outcome("SORRY");
-				}
-				else {
-					return new Outcome("CONGRATULATIONS");
-				}
+				return new Outcome("CONGRATULATIONS");
 			}
 			
 		}
 		catch (Exception e){
 			log.error("Exception occurred while trying to get customer "+wallet);
-			log.error(e.getMessage(),e.getCause());
+			log.debug(e.getMessage(),e.getCause());
 			return new Outcome("ERROR");
 		}
 		log.info("Correctly investigated customer "+wallet);
