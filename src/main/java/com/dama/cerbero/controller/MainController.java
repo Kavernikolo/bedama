@@ -62,11 +62,11 @@ public class MainController {
 			List<Subscriber> subscribers = userRepository.findByAddress(wallet.getAddress());
 			if(subscribers.isEmpty()) {
 				if(userRepository.count() < 1000) {
-					return new Outcome("CAN_ENROL");
+					return new Outcome("CAN");
 				}
 			}
 			for (Subscriber s : subscribers) {
-				return new Outcome("CONGRATULATIONS");
+				return new Outcome("WIN");
 			}
 			
 		}
