@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,7 @@ public class MainController {
 		return String.format(template, name);
 	}
 	
+	@CrossOrigin
 	@PostMapping(path = "/enrol", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome enrol(@RequestBody Airdrop airdrop){
 		
@@ -55,13 +57,14 @@ public class MainController {
 		return new Outcome(true);
 	}
 	
+	@CrossOrigin
 	@GetMapping(path = "/check", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome check(@RequestBody Wallet wallet){
 		
 		try { 
 			List<Subscriber> subscribers = userRepository.findByAddress(wallet.getAddress());
 			if(subscribers.isEmpty()) {
-				if(userRepository.count() < 1000) {
+				if(userRepository.count() <= 1000) {
 					return new Outcome("CAN");
 				}
 				else return new Outcome("FU");
