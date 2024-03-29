@@ -64,6 +64,7 @@ public class MainController {
 				if(userRepository.count() < 1000) {
 					return new Outcome("CAN");
 				}
+				else return new Outcome("FU");
 			}
 			for (Subscriber s : subscribers) {
 				return new Outcome("WIN");
