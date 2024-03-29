@@ -22,11 +22,13 @@ import com.dama.cerbero.entities.interfaces.SubscriberRepository;
 import com.dama.cerbero.requests.Airdrop;
 import com.dama.cerbero.requests.Wallet;
 import com.dama.cerbero.responses.Outcome;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class MainController {
 	  
@@ -42,9 +44,12 @@ public class MainController {
 		return String.format(template, name);
 	}
 	
+	@CrossOrigin
 	@PostMapping(path = "/enrol", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome enrol(@RequestBody Airdrop airdrop){
 		
+		log.info("POST /enrol");
+
 		try { 
 			if(userRepository.count() < 1000) {
 				userRepository.save(new Subscriber(airdrop));
@@ -61,10 +66,13 @@ public class MainController {
 		log.info("Correctly saved customer "+airdrop);
 		return new Outcome(true);
 	}
-	
-	@GetMapping(path = "/check", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@CrossOrigin
+	@PostMapping(path = "/check", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome check(@RequestBody Wallet wallet){
 		
+		log.info("POST /check");
+
 		try { 
 			List<Subscriber> subscribers = userRepository.findByAddress(wallet.getAddress());
 			if(subscribers.isEmpty()) {
@@ -86,12 +94,6 @@ public class MainController {
 		log.info("Correctly investigated customer "+wallet);
 		return new Outcome(true);
 	}
-
-	@RequestMapping(
-		value = "/**",
-		method = RequestMethod.OPTIONS) public ResponseEntity hanle() {
-			return new ResponseEntity(HttpStatus.OK);
-		}
 
 	
 }
