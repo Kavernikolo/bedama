@@ -6,7 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +22,11 @@ import com.dama.cerbero.entities.interfaces.SubscriberRepository;
 import com.dama.cerbero.requests.Airdrop;
 import com.dama.cerbero.requests.Wallet;
 import com.dama.cerbero.responses.Outcome;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class MainController {
 	  
@@ -36,7 +42,6 @@ public class MainController {
 		return String.format(template, name);
 	}
 	
-	@CrossOrigin
 	@PostMapping(path = "/enrol", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome enrol(@RequestBody Airdrop airdrop){
 		
@@ -57,7 +62,6 @@ public class MainController {
 		return new Outcome(true);
 	}
 	
-	@CrossOrigin
 	@GetMapping(path = "/check", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome check(@RequestBody Wallet wallet){
 		
@@ -82,5 +86,12 @@ public class MainController {
 		log.info("Correctly investigated customer "+wallet);
 		return new Outcome(true);
 	}
+
+	@RequestMapping(
+		value = "/**",
+		method = RequestMethod.OPTIONS) public ResponseEntity hanle() {
+			return new ResponseEntity(HttpStatus.OK);
+		}
+
 	
 }
