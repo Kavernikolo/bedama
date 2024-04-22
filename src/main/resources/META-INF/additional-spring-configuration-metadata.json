@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "url.solana",
+  "type": "java.lang.String",
+  "description": "Solana APIs URL"
+}]}

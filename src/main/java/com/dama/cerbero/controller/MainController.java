@@ -1,14 +1,20 @@
 package com.dama.cerbero.controller;
 
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,23 +25,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dama.cerbero.entities.Subscriber;
 import com.dama.cerbero.entities.interfaces.SubscriberRepository;
+import com.dama.cerbero.entities.interfaces.TransactionInteractionRepository;
 import com.dama.cerbero.requests.Airdrop;
+import com.dama.cerbero.requests.Transaction;
 import com.dama.cerbero.requests.Wallet;
 import com.dama.cerbero.responses.Outcome;
-
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.dama.cerbero.responses.SolanaResponse;
+import com.google.gson.Gson;
 
 
 @RestController
 public class MainController {
-	  
+		  
 	private static final Logger log = LoggerFactory.getLogger(MainController.class);
     
+	@Value("${url.solana}")
+	String url;
+	
 	@Autowired
     SubscriberRepository userRepository;
+	
+	@Autowired
+	TransactionInteractionRepository txRepository;
 
 	private static final String template = "Hello, %s!";
 
@@ -94,6 +105,68 @@ public class MainController {
 		log.info("Correctly investigated customer "+wallet);
 		return new Outcome(true);
 	}
+	@CrossOrigin
+	@PostMapping(path = "/rpcSend", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Outcome rpcSend(@RequestBody Transaction tx){
+		
+		log.info("POST /transact");
 
+		try { 
+
+			JSONObject json = new JSONObject();
+			json.put("jsonrpc", "2.0");    
+			json.put("id", 1);    
+			json.put("method", tx.getMethod());    
+			json.put("params", tx.getParams());
+			
+			HttpClient client = HttpClient.newHttpClient();
+		    HttpRequest request = HttpRequest.newBuilder()
+		                .uri(URI.create(url))
+		                .build();
+		       
+		              HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+		              log.info("Ha funzionato tutto e siamo fiKissimi");
+		       
+		              SolanaResponse solanaResponse = new Gson().fromJson(response.body(), SolanaResponse.class);
+		              
+		              log.info("Ho mappato la risposta di Solana");
+		              
+			
+				
+			List<Subscriber> subscribers = userRepository.findByAddress(wallet.getAddress());
+
+			
+		}
+		catch (Exception e){
+			log.error("Exception occurred while trying to get customer "+wallet);
+			log.debug(e.getMessage(),e.getCause());
+			return new Outcome("ERROR");
+		}
+		log.info("Correctly investigated customer "+wallet);
+		return new Outcome(true);
+	}
+
+	@CrossOrigin
+	@PostMapping(path = "/rpcCheck", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Outcome rpcCheck(@RequestBody SolanaResponse tx){
+		
+		log.info("POST /transact");
+
+		try { 
+
+			ProcessBuilder pd = new ProcessBuilder("/bin/sh -c solana confirm %s", tx.getResult());
+			pd.redirectOutput();
+			Process proc = pd.start();
+			proc.waitFor(30L, TimeUnit.SECONDS);
+			
+		}
+		catch (Exception e){
+			log.error("Exception occurred while trying to get customer "+wallet);
+			log.debug(e.getMessage(),e.getCause());
+			return new Outcome("ERROR");
+		}
+		log.info("Correctly investigated customer "+wallet);
+		return new Outcome(true);
+	}
 	
 }

@@ -21,6 +21,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation files('libs/mysql-connector-j-8.3.0.jar')
 	implementation files('libs/ojdbc11.jar')
+	implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
+	implementation group: 'org.json', name: 'json', version: '20240303'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+	
 }
 
 tasks.named('test') {
