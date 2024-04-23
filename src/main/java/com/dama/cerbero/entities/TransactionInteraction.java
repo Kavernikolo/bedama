@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import com.dama.cerbero.requests.Transaction;
+import com.dama.cerbero.responses.SolanaResponse;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,11 +16,11 @@ import jakarta.persistence.GenerationType;
 	
 	public TransactionInteraction () {}
 	
-		public TransactionInteraction(Transaction t) {
+		public TransactionInteraction(Transaction t, SolanaResponse s) {
 			this.transaction = t.getParams().get(0);
 			this.ts = System.currentTimeMillis();
 			this.status = "";
-			this.txId = "";
+			this.txId = s.getResult();
 		}
 	    
 	    @Id
