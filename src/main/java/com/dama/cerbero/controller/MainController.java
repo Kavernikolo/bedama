@@ -126,7 +126,7 @@ public class MainController {
 		                .build();
 		       
 		              HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-		              log.info("Ha funzionato tutto e siamo fiKissimi");
+		              log.info("Outcome: " +response.statusCode());
 		              log.info(response.body());
 		       
 		              SolanaResponse solanaResponse = new Gson().fromJson(response.body(), SolanaResponse.class);
