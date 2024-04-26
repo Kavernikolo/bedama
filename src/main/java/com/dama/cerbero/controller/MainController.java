@@ -121,7 +121,7 @@ public class MainController {
 			json.put("method", "sendTransaction");    
 			json.put("params", tx.getParams());
 			
-			log.info(json.toString())
+			log.info(json.toString());
 			HttpClient client = HttpClient.newHttpClient();
 		    HttpRequest request = HttpRequest.newBuilder()
 		                .uri(URI.create(url))
