@@ -122,32 +122,42 @@ public class MainController {
 			json.put("params", tx.getParams());
 			
 			log.info(json.toString());
-			HttpClient client = HttpClient.newHttpClient();
-		    HttpRequest request = HttpRequest.newBuilder()
-		                .uri(URI.create(url))
-		                .header("Content-type", "application/json")
-		                .header("Accept", "application/json")
-		                .POST(BodyPublishers.ofString(json.toString()))
-		                .build();
-		       
-		              HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-		              log.info("Outcome: " +response.statusCode());
-		              log.info(response.body());
-		       
-		              SolanaResponse solanaResponse = new Gson().fromJson(response.body(), SolanaResponse.class);
-		              
-		              log.info("Ho mappato la risposta di Solana");
-		              
-		              try {
-		            	  txRepository.save(new TransactionInteraction(tx, solanaResponse));
-		              }
-		              catch (Exception e) {
-		            	  log.error("Errore durante il salvataggio sul DB. Eccezione: ");
-		            	  log.error(e.getMessage(), e.getCause());
-		      			return new Outcome("ERROR");
-		              }
-
+			int run = 10;
 			
+			HttpResponse<String> response = null;
+
+			while(run > 0) {
+				HttpClient client = HttpClient.newHttpClient();
+				HttpRequest request = HttpRequest.newBuilder()
+							.uri(URI.create(url))
+							.header("Content-type", "application/json")
+							.header("Accept", "application/json")
+							.POST(BodyPublishers.ofString(json.toString()))
+							.build();
+				
+				response = client.send(request, BodyHandlers.ofString());
+				log.info("Outcome: " +response.statusCode());
+				log.info(response.body());
+				if (response.body().contains("result")){
+					run = 0;
+				} else {
+					run--;
+					TimeUnit.SECONDS.sleep(4);
+				}
+			}
+		       
+		    SolanaResponse solanaResponse = new Gson().fromJson(response.body(), SolanaResponse.class);
+		              
+		    log.info("Ho mappato la risposta di Solana");
+		              
+		    try {
+		        txRepository.save(new TransactionInteraction(tx, solanaResponse));
+		    }
+		    catch (Exception e) {
+		        log.error("Errore durante il salvataggio sul DB. Eccezione: ");
+		        log.error(e.getMessage(), e.getCause());
+		    	return new Outcome("ERROR");
+		    }
 		}
 		catch (Exception e){
 			log.error("Eserrotto ");
