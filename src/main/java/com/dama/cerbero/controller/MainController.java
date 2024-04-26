@@ -124,6 +124,8 @@ public class MainController {
 			HttpClient client = HttpClient.newHttpClient();
 		    HttpRequest request = HttpRequest.newBuilder()
 		                .uri(URI.create(url))
+		                .header("Content-type", "application/json")
+		                .header("Accept", "application/json")
 		                .POST(BodyPublishers.ofString(json.toString()))
 		                .build();
 		       
