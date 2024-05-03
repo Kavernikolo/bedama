@@ -107,6 +107,7 @@ public class MainController {
 		log.info("Correctly investigated customer "+wallet);
 		return new Outcome(true);
 	}
+
 	@CrossOrigin
 	@PostMapping(path = "/sendtransaction", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome rpcSend(@RequestBody Transaction tx){
@@ -158,6 +159,54 @@ public class MainController {
 		        log.error(e.getMessage(), e.getCause());
 		    	return new Outcome("ERROR");
 		    }
+		}
+		catch (Exception e){
+			log.error("Eserrotto ");
+			log.debug(e.getMessage(),e.getCause());
+			return new Outcome("ERROR");
+		}
+		log.info("Done ");
+		return new Outcome(true);
+	}
+
+	@CrossOrigin
+	@PostMapping(path = "/sendtransactiondevnet", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Outcome devnetSend(@RequestBody Transaction tx){
+		
+		log.info("POST /sendtransactiondevnet");
+
+		try { 
+
+			JSONObject json = new JSONObject();
+			json.put("jsonrpc", "2.0");    
+			json.put("id", 1);    
+			json.put("method", "sendTransaction");    
+			json.put("params", tx.getParams());
+			
+			log.info(json.toString());
+			int run = 10;
+			
+			HttpResponse<String> response = null;
+
+			while(run > 0) {
+				HttpClient client = HttpClient.newHttpClient();
+				HttpRequest request = HttpRequest.newBuilder()
+							.uri(URI.create("https://api.devnet.solana.com"))
+							.header("Content-type", "application/json")
+							.header("Accept", "application/json")
+							.POST(BodyPublishers.ofString(json.toString()))
+							.build();
+				
+				response = client.send(request, BodyHandlers.ofString());
+				log.info("Outcome: " +response.statusCode());
+				log.info(response.body());
+				if (response.body().contains("result")){
+					run = 0;
+				} else {
+					run--;
+					TimeUnit.SECONDS.sleep(4);
+				}
+			}
 		}
 		catch (Exception e){
 			log.error("Eserrotto ");
