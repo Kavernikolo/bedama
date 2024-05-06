@@ -16,11 +16,13 @@ import jakarta.persistence.GenerationType;
 	
 	public TransactionInteraction () {}
 	
-		public TransactionInteraction(Transaction t, SolanaResponse s) {
+		public TransactionInteraction(Transaction t, SolanaResponse s, String network, String service) {
 			this.transaction = t.getParams().get(0);
 			this.ts = System.currentTimeMillis();
 			this.status = "";
 			this.txId = s.getResult();
+			this.network = network;
+			this.service = service;
 		}
 	    
 	    @Id
@@ -34,6 +36,10 @@ import jakarta.persistence.GenerationType;
 	    private String status;
 
 	    private Long ts;
+
+		private String network;
+
+		private String service;
 
 		public Long getId() {
 			return id;
@@ -76,10 +82,26 @@ import jakarta.persistence.GenerationType;
 			this.ts = ts;
 		}
 
+		public String getNetwork() {
+			return this.network;
+		}
+
+		public void setNetwork(String network) {
+			this.network = network;
+		}
+
+		public String getService() {
+			return this.service;
+		}
+
+		public void setService(String service) {
+			this.service = service;
+		}
+
 		@Override
 		public String toString() {
 			return "TransactionInteraction [id=" + id + ", transaction=" + transaction + ", txId=" + txId + ", status="
-					+ status + ", ts=" + ts + "]";
+					+ status + ", ts=" + ts + ", network=" + network + ", service=" + service + "]";
 		}
 	    
 	    // standard constructors / setters / getters / toString

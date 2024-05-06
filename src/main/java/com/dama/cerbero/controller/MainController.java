@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dama.cerbero.entities.Subscriber;
 import com.dama.cerbero.entities.TransactionInteraction;
 import com.dama.cerbero.entities.interfaces.SubscriberRepository;
-import com.dama.cerbero.entities.interfaces.TransactionInteractionRepository;
+import com.dama.cerbero.entities.interfaces.TransactionRepository;
 import com.dama.cerbero.requests.Airdrop;
 import com.dama.cerbero.requests.Transaction;
 import com.dama.cerbero.requests.Wallet;
@@ -48,7 +48,7 @@ public class MainController {
     SubscriberRepository userRepository;
 	
 	@Autowired
-	TransactionInteractionRepository txRepository;
+	TransactionRepository txRepository;
 
 	private static final String template = "Hello, %s!";
 
@@ -152,7 +152,7 @@ public class MainController {
 		    log.info("Ho mappato la risposta di Solana");
 		              
 		    try {
-		        txRepository.save(new TransactionInteraction(tx, solanaResponse));
+		        txRepository.save(new TransactionInteraction(tx, solanaResponse,"mainnet",""));
 		    }
 		    catch (Exception e) {
 		        log.error("Errore durante il salvataggio sul DB. Eccezione: ");
@@ -207,6 +207,19 @@ public class MainController {
 					TimeUnit.SECONDS.sleep(4);
 				}
 			}
+
+			SolanaResponse solanaResponse = new Gson().fromJson(response.body(), SolanaResponse.class);
+		              
+		    log.info("Ho mappato la risposta di Solana");
+		              
+		    try {
+		        txRepository.save(new TransactionInteraction(tx, solanaResponse,"devnet",""));
+		    }
+		    catch (Exception e) {
+		        log.error("Errore durante il salvataggio sul DB. Eccezione: ");
+		        log.error(e.getMessage(), e.getCause());
+		    	return new Outcome("ERROR");
+		    }
 		}
 		catch (Exception e){
 			log.error("Eserrotto ");
