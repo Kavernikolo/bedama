@@ -31,6 +31,7 @@ import com.dama.cerbero.entities.interfaces.TransactionRepository;
 import com.dama.cerbero.requests.Airdrop;
 import com.dama.cerbero.requests.Transaction;
 import com.dama.cerbero.requests.ConnectRequest;
+import com.dama.cerbero.requests.SendEmailRequest;
 import com.dama.cerbero.requests.Wallet;
 import com.dama.cerbero.responses.Outcome;
 import com.dama.cerbero.responses.SolanaResponse;
@@ -65,6 +66,24 @@ public class MainController {
 		log.info("POST /connect");
 		try {
 			log.info("Wallet Adapter Name: "+request.getAdapter());
+		} catch (Exception e){
+			
+			log.error("Canìt parse body");
+
+		}
+
+		return new Outcome(true);
+	}
+
+	@CrossOrigin
+	@PostMapping(path = "/sendemail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Outcome sendemail(@RequestBody SendEmailRequest request){
+		
+		log.info("POST /sendemail");
+		try {
+			log.info("Message From: "+request.getEmail());
+			log.info("Message Subject: "+request.getSubject());
+			log.info("Message: "+request.getMessage());
 		} catch (Exception e){
 			
 			log.error("Canìt parse body");
