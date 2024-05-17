@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dama.cerbero.entities.MailTable;
 import com.dama.cerbero.entities.Subscriber;
-import com.dama.cerbero.entities.TransactionInteraction;
+import com.dama.cerbero.entities.TransactionTable;
+import com.dama.cerbero.entities.interfaces.MailRepository;
 import com.dama.cerbero.entities.interfaces.SubscriberRepository;
 import com.dama.cerbero.entities.interfaces.TransactionRepository;
 import com.dama.cerbero.requests.Airdrop;
@@ -51,6 +53,9 @@ public class MainController {
 	
 	@Autowired
 	TransactionRepository txRepository;
+
+	@Autowired
+	MailRepository mailRepository;
 
 	private static final String template = "Hello, %s!";
 
@@ -80,10 +85,26 @@ public class MainController {
 	public @ResponseBody Outcome sendemail(@RequestBody SendEmailRequest request){
 		
 		log.info("POST /sendemail");
+		
 		try {
-			log.info("Message From: "+request.getEmail());
-			log.info("Message Subject: "+request.getSubject());
+
+			String email = request.getEmail();
+			String subject = request.getSubject();
+			String message = request.getMessage();
+
+			log.info("Message From: "+email);
+			log.info("Message Subject: "+subject);
 			log.info("Message: "+request.getMessage());
+
+			try {
+				mailRepository.save(new MailTable(email,subject,message));
+			}
+			catch (Exception e) {
+				log.error("Errore durante il salvataggio sul DB. Eccezione: ");
+				log.error(e.getMessage(), e.getCause());
+				return new Outcome("ERROR");
+			}
+
 		} catch (Exception e){
 			
 			log.error("Canìt parse body");
@@ -188,7 +209,7 @@ public class MainController {
 		    log.info("Ho mappato la risposta di Solana");
 		              
 		    try {
-		        txRepository.save(new TransactionInteraction(tx, solanaResponse,"mainnet",""));
+		        txRepository.save(new TransactionTable(tx, solanaResponse,"mainnet",""));
 		    }
 		    catch (Exception e) {
 		        log.error("Errore durante il salvataggio sul DB. Eccezione: ");
@@ -249,7 +270,7 @@ public class MainController {
 		    log.info("Ho mappato la risposta di Solana");
 		              
 		    try {
-		        txRepository.save(new TransactionInteraction(tx, solanaResponse,"devnet",""));
+		        txRepository.save(new TransactionTable(tx, solanaResponse,"devnet",""));
 		    }
 		    catch (Exception e) {
 		        log.error("Errore durante il salvataggio sul DB. Eccezione: ");

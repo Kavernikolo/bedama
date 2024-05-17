@@ -12,11 +12,11 @@ import jakarta.persistence.GenerationType;
 
 @Entity
 	@Table(name = "TransactionInteraction")
-	public class TransactionInteraction {
+	public class TransactionTable {
 	
-	public TransactionInteraction () {}
+	public TransactionTable () {}
 	
-		public TransactionInteraction(Transaction t, SolanaResponse s, String network, String service) {
+		public TransactionTable(Transaction t, SolanaResponse s, String network, String service) {
 			this.transaction = t.getParams().get(0);
 			this.ts = System.currentTimeMillis();
 			this.status = "";
