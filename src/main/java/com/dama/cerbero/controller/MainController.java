@@ -291,10 +291,11 @@ public class MainController {
 
 		String response = "KO";
 		String command = "/home/solana/.local/share/solana/install/releases/stable-d0ed878d573c7f5391cd2cba20465407f63f11a8/solana-release/bin/solana confirm ";
+		log.info("POST /confirmtransactioj");
+		
 		try {
 
 			Process proc = rt.exec(command + tx.getResult());
-			System.out.println(command+tx.getResult());
 			log.info("TX = "+tx.getResult());
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
