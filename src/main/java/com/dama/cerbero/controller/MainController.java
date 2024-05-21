@@ -289,19 +289,22 @@ public class MainController {
 	@PostMapping(path = "/confirmtransaction", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Outcome rpcCheck(@RequestBody SolanaResponse tx) {
 
-		log.info("POST /confirmtransaction");
-
+		String response = "KO";
+		String command = "/home/solana/.local/share/solana/install/releases/stable-d0ed878d573c7f5391cd2cba20465407f63f11a8/solana-release/bin/solana confirm ";
 		try {
 
-			Process proc = rt.exec("ls");
+			Process proc = rt.exec(command + tx.getResult());
+			System.out.println(command+tx.getResult());
+			log.info("TX = "+tx.getResult());
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			// Read the output from the command
-			System.out.println("Here is the standard output of the command:\n");
 			String s = null;
 			try {
 				while ((s = stdInput.readLine()) != null) {
 					System.out.println(s);
+					response= s;
+					log.info("RESPONSE = ["+s+"]");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -309,7 +312,6 @@ public class MainController {
 			}
 
 			// Read any errors from the attempted command
-			System.out.println("Here is the standard error of the command (if any):\n");
 			try {
 				while ((s = stdError.readLine()) != null) {
 					System.out.println(s);
@@ -323,7 +325,7 @@ public class MainController {
 			return new Outcome("ERROR");
 		}
 		log.info("Done ");
-		return new Outcome(true);
+		return new Outcome(response);
 	}
 
 }
